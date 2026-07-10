@@ -1,0 +1,22 @@
+# Environnements Python
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Dataset Kaggle (trop lourd pour GitHub)
+data/
+dataset/
+*.zip
+
+# Modèle entraîné (si trop lourd, sinon on peut le garder)
+# *.h5
+
+# IDE et système
+.vscode/
+.idea/
+.DS_Store
+
+# Secrets
+.env
