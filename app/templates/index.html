@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartBin</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
+    .info { background: #eef3ff; padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+    form.search { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    input[type=text] { flex: 1; padding: 0.6rem; font-size: 1rem; }
+    button { padding: 0.6rem 1.2rem; font-size: 1rem; cursor: pointer; }
+    .result { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid #eee; }
+    .banner { padding: 2rem; border-radius: 1rem; text-align: center; margin-top: 1.5rem; }
+    .banner h1 { margin: 0; }
+    .banner p { margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>♻️ SmartBin</h1>
+  <p>Recherchez un produit, on vous dit dans quelle poubelle le jeter.</p>
+
+  {% if using_mocks %}
+  <div class="info">🧪 Mode démo : le scraper et/ou le modèle ne sont pas encore branchés, des données simulées sont utilisées à leur place.</div>
+  {% endif %}
+
+  <form class="search" method="post" action="/search">
+    <input type="text" name="query" placeholder="ex : bouteille d'eau, smartphone, cahier..." value="{{ query or '' }}" required>
+    <button type="submit">Rechercher</button>
+  </form>
+
+  {% if results %}
+  <h2>Résultats</h2>
+  {% for product in results %}
+  <div class="result">
+    <span><strong>{{ product.name }}</strong> — {{ product.price }}</span>
+    <form method="post" action="/classify">
+      <input type="hidden" name="name" value="{{ product.name }}">
+      <input type="hidden" name="price" value="{{ product.price }}">
+      <input type="hidden" name="query" value="{{ query }}">
+      <button type="submit">Choisir</button>
+    </form>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% if category %}
+  <div class="banner" style="background-color: {{ category.color }}; color: {{ category.text_color }};">
+    <h1>{{ category.emoji }} {{ category.label }}</h1>
+    <p>{{ category.desc }}</p>
+  </div>
+  <p>Produit sélectionné : {{ selected.name }}</p>
+  {% endif %}
+</body>
+</html>
