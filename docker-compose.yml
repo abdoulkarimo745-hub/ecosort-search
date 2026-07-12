@@ -1,0 +1,6 @@
+services:
+  ecosort:
+    build: .
+    image: ecosort
+    ports:
+      - "8501:8501"
