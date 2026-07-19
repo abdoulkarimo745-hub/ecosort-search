@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}EcoSort-Search — {{ category.label }}{% endblock %}
+{% block content %}
+<section class="result-hero">
+  <div class="result-hero-badge">
+    <img
+      class="result-hero-img"
+      src="{{ url_for('static', filename='images/bins/' ~ category.image) }}"
+      alt="{{ category.label }}"
+    >
+  </div>
+  <h1>{{ category.label }}</h1>
+  <p>{{ category.desc }}</p>
+  {% if confidence is not none %}
+  <div class="confidence-pill">
+    Confiance de la prédiction : <strong>{{ "%.0f"|format(confidence * 100) }}%</strong>
+  </div>
+  {% endif %}
+</section>
+
+<section class="panel product-panel result-overlay" role="dialog" aria-label="Résultat de tri">
+  <div class="product-media">
+    <img src="{{ selected.image }}" alt="{{ selected.name }}">
+  </div>
+  <div>
+    <strong>{{ selected.name }}</strong>
+    <span class="price mono">{{ selected.price }}</span>
+    {% if selected.url %}
+    <a class="jumia-link" href="{{ selected.url }}" target="_blank" rel="noopener">Voir le produit sur Jumia ↗</a>
+    {% endif %}
+  </div>
+  <div class="result-actions">
+    <a class="btn-outline" href="/">Nouvelle recherche</a>
+    <a class="btn-outline" href="/guide">Voir le guide de tri</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}EcoSort-Search — Guide de tri{% endblock %}
+{% block content %}
+<section class="hero-photo">
+  {% include "_carousel.html" %}
+  <div class="hero-photo-inner">
+    <span class="eyebrow">Guide de tri</span>
+    <h1>Chaque déchet a sa poubelle</h1>
+    <p>Les 5 filières de tri utilisées par EcoSort-Search, avec des exemples concrets pour chacune.</p>
+  </div>
+</section>
+
+<!-- Les 5 poubelles toujours alignées sur une seule ligne (voir
+     .guide-grid dans style.css : 5 colonnes fixes, ne passe jamais à la
+     ligne — la taille se réduit sur petit écran plutôt que d'empiler). -->
+<div class="guide-grid">
+  {% for key, cat in categories.items() %}
+  <article class="guide-card" style="--cat-color:{{ cat.color }}; --cat-text:{{ cat.text_color }};">
+    <img
+      class="guide-bin-img"
+      src="{{ url_for('static', filename='images/bins/' ~ key ~ '.png') }}"
+      alt="Poubelle {{ cat.label }}"
+      loading="lazy"
+    >
+    <div class="guide-card-head">
+      <span class="guide-emoji">{{ cat.emoji }}</span>
+      <h2>{{ cat.label }}</h2>
+    </div>
+    <p class="guide-desc">{{ cat.desc }}</p>
+    <p class="guide-examples-inline">{{ cat.examples | join(" · ") }}</p>
+  </article>
+  {% endfor %}
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/carousel.js') }}?v=1"></script>
+{% endblock %}
