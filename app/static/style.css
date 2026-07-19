@@ -61,14 +61,14 @@ body::before {
   inset: -24px; /* déborde pour masquer les bords flous */
   z-index: -1;
   background: url('/static/images/bins-background.jpg') center 30% / cover no-repeat;
-  filter: blur(3px) saturate(1.05);
+  filter: blur(9px) saturate(1.05);
 }
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(rgba(244, 246, 241, .6), rgba(244, 246, 241, .7));
+   background: linear-gradient(rgba(244, 246, 241, .15), rgba(244, 246, 241, .25));
 }
 
 a { color: inherit; text-decoration: none; }
@@ -391,4 +391,47 @@ body.is-result .topbar { margin-bottom: 10px; }
   .result-list { grid-template-columns: 1fr; }
   .product-panel.result-overlay { grid-template-columns: 1fr; }
   .product-media { height: 200px; }
+}
+
+/* Badge pays (drapeau + nom) sur les cartes produits — recherche multi-pays Jumia. */
+.country-tag {
+  display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; margin-right: 8px;
+  padding: 3px 10px; border-radius: 999px; background: var(--surface-2);
+  border: 1px solid var(--border); font-size: .8rem; font-weight: 600;
+}
+
+/* Hero statique de la page À propos (pas de carousel : image fixe). */
+.hero-static {
+  background:
+    linear-gradient(160deg, rgba(15, 22, 18, .72), rgba(15, 22, 18, .38) 55%, rgba(15, 22, 18, .6)),
+    url('/static/images/bins-background.jpg') center 32% / cover no-repeat;
+}
+
+/* Page À propos : contenu et crédits. */
+.about-text { margin: 0; line-height: 1.8; font-size: 1.02rem; }
+.about-credits { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+.about-authors { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 8px; }
+.about-classe { color: var(--muted); font-weight: 600; }
+.about-role { margin: 0; color: var(--muted); font-style: italic; }
+.about-teacher { margin: 0; font-size: 1.05rem; }
+@media (max-width: 640px) { .about-credits { grid-template-columns: 1fr; } }
+
+/* ---------- Vidéo en boucle dans le hero (page guide) ---------- */
+.hero-video { position: absolute; inset: 0; }
+.hero-video video {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+/* Voile sombre au-dessus de la vidéo pour la lisibilité du texte. */
+.hero-video::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(160deg, rgba(15, 22, 18, .72), rgba(15, 22, 18, .38) 55%, rgba(15, 22, 18, .6));
+}
+
+/* ---------- Fonds de page par section ----------
+   Pages principale + guide : la nouvelle image "zéro déchet".
+   Page À propos : l'ancienne photo des 5 poubelles (fond par défaut). */
+body.page-search::before,
+body.page-results::before,
+body.page-guide::before {
+  background-image: url('/static/images/zero-waste-background.jpg');
 }

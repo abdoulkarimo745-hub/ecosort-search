@@ -2,7 +2,14 @@
 {% block title %}EcoSort-Search — Guide de tri{% endblock %}
 {% block content %}
 <section class="hero-photo">
-  {% include "_carousel.html" %}
+  <!-- Vidéo en boucle en fond du hero (remplace le carousel sur cette
+       page). muted est obligatoire pour que l'autoplay soit accepté par
+       les navigateurs ; playsinline évite le plein écran forcé sur mobile. -->
+  <div class="hero-video" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="{{ url_for('static', filename='videos/guide.mp4') }}" type="video/mp4">
+    </video>
+  </div>
   <div class="hero-photo-inner">
     <span class="eyebrow">Guide de tri</span>
     <h1>Chaque déchet a sa poubelle</h1>
@@ -33,8 +40,4 @@
 </div>
 
 
-{% endblock %}
-
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/carousel.js') }}?v=1"></script>
 {% endblock %}
