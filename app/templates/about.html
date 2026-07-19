@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}EcoSort-Search — À propos{% endblock %}
+{% block content %}
+<!-- Hero statique (pas de carousel sur cette page : l'espace est dédié à
+     la présentation du site et de ses auteurs). -->
+<section class="hero-photo hero-static">
+  <div class="hero-photo-inner">
+    <span class="eyebrow">À propos</span>
+    <h1>EcoSort-Search, le tri sélectif assisté par l'IA</h1>
+    <p>Un moteur de recherche de produits qui vous dit, en un clic, dans quelle poubelle les jeter.</p>
+  </div>
+</section>
+
+<section class="panel about-panel">
+  <h2>Ce que fait le site</h2>
+  <p class="about-text">
+    Vous tapez le nom d'un produit de consommation courante ; EcoSort-Search le recherche
+    en direct sur les sites <strong>Jumia</strong> de 9 pays africains et vous propose les
+    résultats correspondants, chacun avec son pays d'origine. Une fois un produit choisi,
+    une <strong>Intelligence Artificielle</strong> (Deep Learning — MobileNetV2) analyse
+    son image et détermine sa consigne de tri : l'écran se colore alors aux couleurs de la
+    poubelle correspondante (jaune, verte, bleue, bac électronique D3E ou marron), avec le
+    produit « jeté » dans la bonne poubelle en animation. Un guide de tri intégré rappelle
+    à tout moment les 5 filières et leurs exemples concrets.
+  </p>
+</section>
+
+<section class="panel about-panel">
+  <div class="about-credits">
+    <div class="about-col">
+      <h2>Auteurs</h2>
+      <ul class="about-authors">
+        {% for author in authors %}
+        <li><strong>{{ author.name }}</strong> <span class="about-classe">({{ author.classe }})</span></li>
+        {% endfor %}
+      </ul>
+      <p class="about-role">Élèves ingénieurs statisticiens</p>
+    </div>
+    <div class="about-col">
+      <h2>Enseignant</h2>
+      <p class="about-teacher"><strong>{{ teacher }}</strong></p>
+    </div>
+  </div>
+</section>
+{% endblock %}
