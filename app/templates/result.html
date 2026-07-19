@@ -25,6 +25,9 @@
   <div>
     <strong>{{ selected.name }}</strong>
     <span class="price mono">{{ selected.price }}</span>
+    {% if selected.country %}
+    <span class="country-tag">{{ selected.flag }} {{ selected.country }}</span>
+    {% endif %}
     {% if selected.url %}
     <a class="jumia-link" href="{{ selected.url }}" target="_blank" rel="noopener">Voir le produit sur Jumia ↗</a>
     {% endif %}

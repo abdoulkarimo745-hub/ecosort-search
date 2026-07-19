@@ -45,6 +45,9 @@
       <div class="result-body">
         <strong>{{ product.name }}</strong>
         <span class="price mono">{{ product.price }}</span>
+        {% if product.country %}
+        <span class="country-tag" title="Produit trouvé sur Jumia {{ product.country }}">{{ product.flag }} {{ product.country }}</span>
+        {% endif %}
         {% if product.url %}
         <a class="jumia-link" href="{{ product.url }}" target="_blank" rel="noopener">Voir sur Jumia ↗</a>
         {% endif %}
@@ -54,6 +57,8 @@
         <input type="hidden" name="price" value="{{ product.price }}">
         <input type="hidden" name="image" value="{{ product.image }}">
         <input type="hidden" name="url" value="{{ product.url or '' }}">
+        <input type="hidden" name="country" value="{{ product.country or '' }}">
+        <input type="hidden" name="flag" value="{{ product.flag or '' }}">
         <input type="hidden" name="query" value="{{ query }}">
         <input type="hidden" name="category" value="">
         <input type="hidden" name="confidence" value="">
