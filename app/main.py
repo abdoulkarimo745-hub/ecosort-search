@@ -15,9 +15,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 #   renvoyant (clé parmi CATEGORIES, confiance de la prédiction ∈ [0, 1])
 # Tant que ces fonctions ne sont pas prêtes, on retombe sur des mocks locaux.
 try:
-    from scraper.jumia_scraper import search_products
+    from scraper.jumia_scraper import search_products_all as search_products
 except ImportError:
-    search_products = None
+    try:
+        from scraper.jumia_scraper import search_products  # ancienne version mono-pays
+    except ImportError:
+        search_products = None
 
 try:
     from model.predict import classify_with_confidence
@@ -174,6 +177,25 @@ def guide():
     )
 
 
+@app.route("/about", methods=["GET"])
+def about():
+    # Page « À propos » : objectif du site, fonctionnalités clés, et
+    # présentation des auteurs (élèves ingénieurs statisticiens) et de
+    # leur enseignant.
+    authors = [
+        {"name": "OUATTARA Abdoul Karim", "classe": "ISE2A"},
+        {"name": "ESSIENNE Ezanne Frédéric", "classe": "ISE2A"},
+        {"name": "TOTON Nicodème Mahugnon", "classe": "ISE2B"},
+    ]
+    return render_template(
+        "about.html",
+        authors=authors,
+        teacher="M. KANGA Boris Parfait",
+        active="about",
+        page="about",
+    )
+
+
 @app.route("/search", methods=["POST"])
 def search():
     # Recherche et résultats vivent sur la MÊME page (search.html) : la
@@ -223,6 +245,8 @@ def classify_selected():
         "price": request.form.get("price", ""),
         "image": request.form.get("image", ""),
         "url": request.form.get("url", ""),
+        "country": request.form.get("country", ""),
+        "flag": request.form.get("flag", ""),
     }
     query = request.form.get("query", "")
 
