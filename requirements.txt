@@ -1,1 +1,20 @@
-flask
+# Versions épinglées pour garantir la reproductibilité (critère Jalon 1).
+# NB : tensorflow et numpy sont épinglés à des versions récentes qui
+# fournissent des wheels précompilés pour Python 3.10 à 3.13 (Windows/Linux/
+# macOS), pour éviter toute compilation locale (qui nécessite un compilateur
+# C absent par défaut sous Windows).
+
+flask==3.0.3
+
+# scraper (Jalon 2)
+requests==2.32.3
+beautifulsoup4==4.12.3
+
+# modèle IA (Jalon 1) — inférence (model/predict.py)
+pillow==10.4.0
+numpy==2.1.3
+
+# modèle IA (Jalon 1) — entraînement (model/train.py) ET inférence CNN réelle.
+# Package volumineux (~600 Mo). Sans lui / sans modèle entraîné, l'appli
+# fonctionne quand même grâce au repli par mots-clés (voir model/predict.py).
+tensorflow==2.20.0
