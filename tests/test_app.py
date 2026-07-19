@@ -61,6 +61,13 @@ class EcoSortAppTest(unittest.TestCase):
         self.assertIn(b"87%", response.data)
         mock_classify_fn.assert_called_once()
 
+    def test_about_page_lists_authors_and_teacher(self):
+        response = self.client.get("/about")
+        self.assertEqual(response.status_code, 200)
+        for expected in ["OUATTARA Abdoul Karim", "ESSIENNE Ezanne Frédéric",
+                         "TOTON Nicodème Mahugnon", "KANGA Boris Parfait"]:
+            self.assertIn(expected.encode("utf-8"), response.data)
+
     @patch("app.main.classify_fn")
     def test_api_classify_returns_category_as_json(self, mock_classify_fn):
         # /api/classify est appelée par js/throw.js AVANT l'animation de jet
