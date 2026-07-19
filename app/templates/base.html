@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}EcoSort-Search{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=9">
+</head>
+<body
+  class="page-{{ page }}{{ ' is-result' if page == 'result' else '' }}"
+  {% if page == 'result' and category %}style="--cat-color:{{ category.color }}; --cat-text:{{ category.text_color }};"{% endif %}
+>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="/">
+        <!-- Logo = les 5 vraies couleurs de tri utilisées par EcoSort-Search :
+             ce n'est pas une icône décorative, c'est la marque du produit. -->
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="40" height="40">
+            <rect x="2"  y="2" width="16" height="16" rx="5" fill="#FFD400"/>
+            <rect x="22" y="2" width="16" height="16" rx="5" fill="#2E7D32"/>
+            <rect x="2"  y="22" width="16" height="16" rx="5" fill="#1565C0"/>
+            <rect x="22" y="22" width="7"  height="16" rx="5" fill="#616161"/>
+            <rect x="31" y="22" width="7"  height="16" rx="5" fill="#4E342E"/>
+          </svg>
+        </span>
+        EcoSort-Search
+      </a>
+      {% if page != 'result' %}
+      <nav class="nav-links">
+        <a href="/" class="{{ 'is-active' if active == 'search' else '' }}">Recherche</a>
+        <a href="/guide" class="{{ 'is-active' if active == 'guide' else '' }}">Guide de tri</a>
+      </nav>
+      {% endif %}
+    </header>
+
+    {% block content %}{% endblock %}
+  </div>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

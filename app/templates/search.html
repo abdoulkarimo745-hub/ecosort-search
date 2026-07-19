@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}EcoSort-Search — Recherche{% endblock %}
+{% block content %}
+<!-- Hero façon "landing page" : la photo des 5 poubelles en fond,
+     le titre et la barre de recherche par-dessus (cf. maquette). -->
+<section class="hero-photo">
+  {% include "_carousel.html" %}
+  <div class="hero-photo-inner">
+    <span class="eyebrow">Tri intelligent</span>
+    <h1>Trouvez en un instant<br>la bonne poubelle</h1>
+    <p>Recherchez un produit : EcoSort-Search l'identifie sur Jumia puis vous montre où le jeter.</p>
+    <form class="search hero-search" method="post" action="/search#resultats">
+      <input type="text" name="query" placeholder="Ex. bouteille d'eau, smartphone, cahier..." value="{{ query or '' }}" required>
+      <button type="submit">Rechercher</button>
+    </form>
+  </div>
+</section>
+
+{% if using_mocks %}
+<p class="info">Mode démo : les résultats affichés sont simulés.</p>
+{% endif %}
+
+<!-- La rangée des 5 poubelles : toujours visible entre le hero et les
+     résultats. C'est vers l'une d'elles que "vole" le produit quand on
+     clique sur "Voir la poubelle" (animation dans js/throw.js). -->
+<section class="bins-row" aria-label="Les 5 poubelles de tri">
+  {% for key, cat in categories.items() %}
+  <a class="bin-slot" id="bin-{{ key }}" href="/guide" title="{{ cat.label }} — {{ cat.desc }}">
+    <img src="{{ url_for('static', filename='images/bins/' ~ key ~ '.png') }}" alt="{{ cat.label }}">
+    <span class="bin-slot-label" style="--cat-color:{{ cat.color }}; --cat-text:{{ cat.text_color }};">{{ cat.short }}</span>
+  </a>
+  {% endfor %}
+</section>
+
+{% if query is not none %}
+<section class="panel results-panel" id="resultats">
+  <h2>Résultats pour «&nbsp;{{ query }}&nbsp;»</h2>
+  {% if results %}
+  <div class="result-list">
+    {% for product in results %}
+    <div class="result product-card">
+      <div class="result-media">
+        <img src="{{ product.image }}" alt="{{ product.name }}">
+      </div>
+      <div class="result-body">
+        <strong>{{ product.name }}</strong>
+        <span class="price mono">{{ product.price }}</span>
+        {% if product.url %}
+        <a class="jumia-link" href="{{ product.url }}" target="_blank" rel="noopener">Voir sur Jumia ↗</a>
+        {% endif %}
+      </div>
+      <form class="classify-form" method="post" action="/classify">
+        <input type="hidden" name="name" value="{{ product.name }}">
+        <input type="hidden" name="price" value="{{ product.price }}">
+        <input type="hidden" name="image" value="{{ product.image }}">
+        <input type="hidden" name="url" value="{{ product.url or '' }}">
+        <input type="hidden" name="query" value="{{ query }}">
+        <input type="hidden" name="category" value="">
+        <input type="hidden" name="confidence" value="">
+        <button type="submit" class="js-throw">Voir la poubelle</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="empty">Aucun résultat pour «&nbsp;{{ query }}&nbsp;». Essayez un autre mot-clé.</p>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/throw.js') }}?v=7"></script>
+<script src="{{ url_for('static', filename='js/carousel.js') }}?v=1"></script>
+{% if results %}
+<script>
+  // Après une recherche, amène directement l'utilisateur au niveau des
+  // poubelles + résultats (le hero a déjà été vu).
+  document.querySelector(".bins-row").scrollIntoView({ block: "start" });
+</script>
+{% endif %}
+{% endblock %}

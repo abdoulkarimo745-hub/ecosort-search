@@ -1,0 +1,17 @@
+{# Carousel du hero (partagé par search.html et guide.html) : les 5 images
+   défilent en fondu (une par catégorie de tri, dans l'ordre jaune, verte,
+   bleue, D3E, marron). Piloté par static/js/carousel.js ; sans JavaScript,
+   la première diapositive reste affichée (fallback statique). #}
+<div class="hero-carousel" aria-hidden="true">
+  {% for slide in ["1-jaune", "2-verte", "3-bleue", "4-d3e", "5-marron"] %}
+  <div
+    class="hero-slide{{ ' is-active' if loop.first else '' }}"
+    style="background-image:url('{{ url_for('static', filename='images/carousel/' ~ slide ~ '.jpg') }}')"
+  ></div>
+  {% endfor %}
+</div>
+<div class="carousel-dots" role="tablist" aria-label="Diapositives">
+  {% for slide in ["1", "2", "3", "4", "5"] %}
+  <button type="button" class="carousel-dot{{ ' is-active' if loop.first else '' }}" data-slide="{{ loop.index0 }}" aria-label="Image {{ slide }}"></button>
+  {% endfor %}
+</div>

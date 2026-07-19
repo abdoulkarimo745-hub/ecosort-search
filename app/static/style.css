@@ -1,0 +1,394 @@
+/* =============================================================
+   EcoSort-Search — design system
+   Identité : les 5 couleurs officielles de tri (jaune, verte, bleue,
+   gris D3E, marron) SONT la marque du produit — utilisées uniquement
+   pour leur sens (quelle poubelle), jamais comme accent décoratif.
+   L'accent d'interface (boutons, liens) est un indigo volontairement
+   distinct des 5 couleurs de tri, pour qu'un bouton ne soit jamais
+   confondu avec une consigne de tri.
+   ============================================================= */
+
+:root {
+  --bg: #f4f6f1;
+  --surface: #ffffff;
+  --surface-2: #edf1e8;
+  --ink: #14171a;
+  --muted: #5b6460;
+  --border: #e1e6de;
+
+  --accent: #4b3ac4;
+  --accent-dark: #372a93;
+  --accent-soft: rgba(75, 58, 196, 0.1);
+
+  --radius-lg: 26px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 20px 44px rgba(20, 23, 26, 0.10);
+  --shadow-soft: 0 10px 24px rgba(20, 23, 26, 0.07);
+
+  /* Les 5 couleurs officielles (dupliquées depuis app/main.py CATEGORIES
+     pour construire le logo/motif en CSS pur ; garder synchronisé). */
+  --c-jaune: #FFD400;
+  --c-verte: #2E7D32;
+  --c-bleue: #1565C0;
+  --c-d3e:   #616161;
+  --c-marron:#4E342E;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--bg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  transition: background-color .5s ease;
+}
+
+/* Fond des pages recherche / résultats / guide : la photo des poubelles en
+   plein écran, floutée avec un voile clair par-dessus (effet "verre
+   dépoli") — les panneaux translucides (backdrop-filter) par-dessus
+   complètent l'effet glassmorphism. Image servie localement (hors ligne OK). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -24px; /* déborde pour masquer les bords flous */
+  z-index: -1;
+  background: url('/static/images/bins-background.jpg') center 30% / cover no-repeat;
+  filter: blur(3px) saturate(1.05);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(rgba(244, 246, 241, .6), rgba(244, 246, 241, .7));
+}
+
+a { color: inherit; text-decoration: none; }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+h1, h2, h3 {
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.mono { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.eyebrow {
+  display: inline-block; text-transform: uppercase; letter-spacing: .1em; font-size: .74rem;
+  font-family: 'JetBrains Mono', monospace; font-weight: 600; margin-bottom: 10px;
+}
+
+.page { max-width: 1080px; margin: 0 auto; padding: 24px 20px 60px; }
+
+/* ---------- Top bar ---------- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 12px; font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.15rem; }
+.logo { width: 40px; height: 40px; display: grid; place-items: center; filter: drop-shadow(var(--shadow-soft)); }
+.nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+.nav-links a {
+  padding: 10px 16px; border-radius: 999px; background: rgba(20, 23, 26, .05);
+  font-weight: 600; font-size: .92rem; transition: background .15s ease, color .15s ease;
+}
+.nav-links a.is-active { background: var(--accent); color: #fff; }
+.nav-links a:hover:not(.is-active) { background: rgba(20, 23, 26, .1); }
+
+/* La page résultat colore tout l'écran : le texte de la barre de nav doit
+   rester lisible quelle que soit la couleur de la poubelle (claire ou
+   sombre) -> on s'appuie sur --cat-text, posée par category.text_color. */
+body.is-result .topbar, body.is-result .brand { color: var(--cat-text); }
+body.is-result .nav-links a { background: rgba(0, 0, 0, .16); color: var(--cat-text); }
+body.is-result .nav-links a.is-active { background: rgba(0, 0, 0, .32); }
+
+/* ---------- Hero (pages recherche & guide) — carousel d'images en fond,
+   voile sombre par-dessus, titre blanc et barre de recherche dans le
+   bandeau. Les diapositives défilent en fondu (js/carousel.js). ---------- */
+.hero-photo {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background: #14171a; /* fond de secours pendant le chargement des images */
+  padding: clamp(44px, 7vw, 84px) clamp(20px, 5vw, 64px);
+  text-align: center;
+  color: #fff;
+  animation: rise .5s ease both;
+}
+.hero-photo-compact { padding: clamp(34px, 5vw, 56px) clamp(20px, 5vw, 64px); }
+
+.hero-carousel { position: absolute; inset: 0; }
+.hero-slide {
+  position: absolute; inset: 0;
+  background-position: center 30%; background-size: cover; background-repeat: no-repeat;
+  opacity: 0; transition: opacity 1s ease;
+}
+.hero-slide.is-active { opacity: 1; }
+/* Voile sombre AU-DESSUS des slides pour la lisibilité du texte. */
+.hero-carousel::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(160deg, rgba(15, 22, 18, .72), rgba(15, 22, 18, .38) 55%, rgba(15, 22, 18, .6));
+}
+.carousel-dots {
+  position: absolute; left: 0; right: 0; bottom: 14px; z-index: 2;
+  display: flex; justify-content: center; gap: 8px;
+}
+.carousel-dot {
+  width: 9px; height: 9px; padding: 0; border-radius: 50%;
+  background: rgba(255, 255, 255, .45); border: 0; cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+  box-shadow: none;
+}
+.carousel-dot:hover { background: rgba(255, 255, 255, .75); transform: scale(1.2); }
+.carousel-dot.is-active { background: #fff; transform: scale(1.25); }
+
+.hero-photo-inner { position: relative; z-index: 2; max-width: 680px; margin: 0 auto; }
+.hero-photo .eyebrow { color: rgba(255, 255, 255, .85); }
+.hero-photo h1 { font-size: clamp(1.7rem, 4vw, 2.7rem); line-height: 1.14; margin-bottom: 12px; text-shadow: 0 2px 18px rgba(0, 0, 0, .35); }
+.hero-photo p { margin: 0 0 22px; line-height: 1.7; color: rgba(255, 255, 255, .92); font-size: 1.02rem; text-shadow: 0 1px 10px rgba(0, 0, 0, .35); }
+.hero-search {
+  background: #fff; border-radius: 999px; padding: 6px;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .28);
+  max-width: 560px; margin: 0 auto;
+}
+.hero-search input[type=text] { border: 0; background: transparent; }
+.hero-search input[type=text]:focus { background: transparent; }
+
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 999px;
+  font-weight: 700; font-size: .92rem; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--border); transition: transform .15s ease, border-color .15s ease;
+  white-space: nowrap;
+}
+.btn-outline:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+/* ---------- Panels & forms ---------- */
+.panel {
+  background: rgba(255, 255, 255, .78); backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow);
+  margin-top: 20px; animation: rise .5s .08s ease both;
+}
+.panel h2 { font-size: 1.15rem; margin-bottom: 14px; }
+.info {
+  background: var(--accent-soft); border: 1px solid rgba(75, 58, 196, .18);
+  border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 16px; color: var(--accent-dark); font-size: .92rem; font-weight: 600;
+}
+form.search { display: flex; gap: 10px; }
+input[type=text] {
+  flex: 1; border: 1px solid var(--border); background: var(--surface-2); border-radius: 999px;
+  padding: 14px 20px; font-size: 1rem; font-family: inherit; outline: none; transition: border-color .15s ease;
+}
+input[type=text]:focus { border-color: var(--accent); background: var(--surface); }
+button {
+  border: 0; border-radius: 999px; padding: 14px 24px; font-size: 1rem; font-weight: 700; font-family: inherit;
+  cursor: pointer; background: var(--accent); color: #fff;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+button:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 10px 22px rgba(75, 58, 196, .28); }
+
+/* ---------- Rangée des 5 poubelles (page principale) ----------
+   Toujours sur une seule ligne, entre le hero et les résultats : c'est la
+   cible visuelle de l'animation de jet (js/throw.js). */
+.bins-row {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px;
+  margin-top: 22px; align-items: end;
+}
+.bin-slot {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 6px 12px; border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, .8); border: 1px solid var(--border);
+  backdrop-filter: blur(4px);
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  min-width: 0;
+}
+.bin-slot:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow-soft); }
+.bin-slot img { height: clamp(64px, 9vw, 104px); width: 100%; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(20, 23, 26, .18)); }
+.bin-slot-label {
+  font-size: .78rem; font-weight: 700; padding: 3px 12px; border-radius: 999px;
+  background: var(--cat-color); color: var(--cat-text); white-space: nowrap; max-width: 100%;
+  overflow: hidden; text-overflow: ellipsis;
+}
+/* Rebond de réception quand le produit "tombe" dedans (ajouté par throw.js). */
+.bin-receiving img { animation: bin-bounce .45s cubic-bezier(.36,1.6,.5,1) both; }
+@keyframes bin-bounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.12) translateY(-4px); }
+  70% { transform: scale(.96) translateY(1px); }
+  100% { transform: scale(1); }
+}
+
+/* Le clone de l'image produit qui "vole" vers la poubelle, en arc (comme
+   un vrai lancer, pas une ligne droite) — voir js/throw.js pour --tx/--ty
+   et la durée réelle (pilotée en JS via --throw-duration). */
+.throw-clone {
+  position: fixed; z-index: 999; margin: 0; pointer-events: none;
+  border-radius: var(--radius-sm); object-fit: cover;
+  box-shadow: 0 14px 30px rgba(20, 23, 26, .3);
+  will-change: transform, opacity;
+  animation: throw-arc var(--throw-duration, 950ms) cubic-bezier(.3,.4,.3,1) forwards;
+}
+@keyframes throw-arc {
+  0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  28%  { transform: translate(calc(var(--tx) * .32), calc(var(--ty) * .18 - 46px)) scale(.82) rotate(-10deg); opacity: 1; }
+  62%  { transform: translate(calc(var(--tx) * .78), calc(var(--ty) * .72 - 14px)) scale(.42) rotate(8deg); opacity: .95; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(.08) rotate(22deg); opacity: .05; }
+}
+
+/* ---------- Résultats de recherche (page 2) ---------- */
+.result-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.result {
+  display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: var(--radius-md);
+  background: var(--surface-2); border: 1px solid var(--border); transition: border-color .15s ease, transform .15s ease;
+}
+.result:hover { border-color: var(--accent); transform: translateY(-2px); }
+.result-media { width: 100%; height: 160px; border-radius: var(--radius-sm); overflow: hidden; background: #e5e9e1; }
+.result-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.result-body strong { display: block; font-size: 1.02rem; margin-bottom: 6px; }
+.result-body .price { font-weight: 700; color: var(--accent-dark); font-size: 1.02rem; }
+.result form { margin-top: auto; }
+.result button { width: 100%; }
+.empty { color: var(--muted); font-size: 1rem; padding: 10px 0; }
+
+/* Lien de vérification vers la vraie fiche produit Jumia. */
+.jumia-link {
+  display: block; margin-top: 6px; font-size: .85rem; font-weight: 700;
+  color: var(--accent-dark); text-decoration: underline; text-underline-offset: 3px;
+}
+.jumia-link:hover { color: var(--accent); }
+
+
+/* ---------- Page résultat (classify) : fond uni à la couleur de la
+   catégorie ("colorer l'écran aux couleurs de la poubelle"), le cercle
+   blanc contenant la poubelle suffit comme repère visuel — pas d'image en
+   filigrane. Le haut est compact pour laisser la vedette au produit jeté. */
+body.is-result {
+  background: var(--cat-color);
+  color: var(--cat-text);
+}
+body.is-result::before,
+body.is-result::after { display: none; }
+body.is-result .topbar { margin-bottom: 10px; }
+
+.result-hero {
+  text-align: center;
+  padding: 0 10px 4px;
+  color: var(--cat-text);
+  animation: rise .55s ease both;
+}
+/* Badge blanc bien délimité : garantit que la poubelle reste visible même
+   quand sa couleur se confond avec le fond (ex. poubelle verte sur écran
+   vert) — c'est LE repère visuel qui dit "la poubelle est là". */
+.result-hero-badge {
+  width: 128px; height: 128px; border-radius: 50%;
+  background: #fff;
+  display: grid; place-items: center;
+  margin: 0 auto 12px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, .3), 0 0 0 5px rgba(255, 255, 255, .3);
+  animation: pop .5s .1s cubic-bezier(.34,1.56,.64,1) both;
+}
+.result-hero-img {
+  width: 92px; height: 92px; object-fit: contain; display: block;
+  filter: drop-shadow(0 6px 12px rgba(20, 23, 26, .22));
+}
+.result-hero h1 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); margin-bottom: 6px; }
+.result-hero p { margin: 0 auto; max-width: 520px; line-height: 1.6; opacity: .92; }
+.confidence-pill {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 8px 16px;
+  border-radius: 999px; background: rgba(0, 0, 0, .18); border: 1px solid rgba(255, 255, 255, .22);
+  font-size: .84rem; font-family: 'JetBrains Mono', monospace; font-weight: 600;
+}
+
+/* Carte produit : reste neutre (blanc/encre) même quand l'écran est
+   coloré, pour que le nom du produit et les actions restent lisibles
+   quelle que soit la couleur de poubelle en fond. Le produit jeté est LA
+   vedette de la page : grande image, vue en entier (contain). */
+.product-panel.result-overlay {
+  background: var(--surface); color: var(--ink);
+  display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: center;
+  border-radius: var(--radius-lg); padding: 26px; box-shadow: var(--shadow);
+  max-width: 780px; margin-left: auto; margin-right: auto;
+  animation: rise .5s .16s ease both;
+}
+.product-media {
+  width: 100%; height: 240px; border-radius: var(--radius-sm); overflow: hidden;
+  background: #fff; border: 1px solid var(--border);
+  display: grid; place-items: center;
+}
+.product-media img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.product-panel strong { display: block; font-size: 1.3rem; line-height: 1.35; margin-bottom: 10px; }
+.product-panel .price { font-weight: 700; color: var(--muted); font-size: 1.15rem; }
+.result-actions { grid-column: 1 / -1; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+
+/* ---------- Guide de tri ---------- */
+/* 5 colonnes fixes et permanentes : les 5 poubelles restent TOUJOURS sur
+   la même ligne, y compris sur mobile (on réduit tailles/paddings via les
+   media queries plutôt que de laisser le grid passer à la ligne). */
+.guide-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-top: 20px; }
+.guide-card {
+  background: rgba(255, 255, 255, .78); backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: var(--radius-md); padding: 16px 12px; box-shadow: var(--shadow-soft);
+  border-top: 6px solid var(--cat-color); transition: transform .15s ease; text-align: center; min-width: 0;
+}
+.guide-card:hover { transform: translateY(-3px); }
+.guide-bin-img {
+  display: block; width: 100%; max-width: 110px; height: 90px; object-fit: contain;
+  margin: 0 auto 10px; filter: drop-shadow(0 8px 14px rgba(20, 23, 26, .16));
+}
+.guide-card-head { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
+.guide-emoji {
+  width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-size: .85rem;
+  background: var(--cat-color); color: var(--cat-text); flex: none;
+}
+.guide-card h2 { font-size: .88rem; line-height: 1.25; }
+.guide-desc { margin: 0 0 8px; color: var(--muted); line-height: 1.5; font-size: .78rem; }
+.guide-examples-inline { margin: 0; color: var(--muted); font-size: .68rem; line-height: 1.5; opacity: .85; }
+.tips-panel h2 { margin-bottom: 12px; }
+.tips-list { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--muted); font-size: .96rem; }
+
+/* En dessous de 640px, les 5 colonnes restent en place mais tout rétrécit
+   encore (texte, image, paddings) pour rester lisible sans jamais empiler. */
+@media (max-width: 640px) {
+  .guide-grid { gap: 6px; }
+  .guide-card { padding: 10px 5px; border-top-width: 4px; border-radius: var(--radius-sm); }
+  .guide-bin-img { height: 52px; margin-bottom: 6px; }
+  .guide-card-head { gap: 4px; margin-bottom: 5px; flex-wrap: wrap; }
+  .guide-emoji { width: 18px; height: 18px; font-size: .62rem; border-radius: 6px; }
+  .guide-card h2 { font-size: .66rem; }
+  .guide-desc { display: none; }
+  .guide-examples-inline { display: none; }
+}
+
+/* ---------- Animations (respecte prefers-reduced-motion) ---------- */
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pop { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 720px) {
+  .hero { flex-direction: column; align-items: flex-start; }
+  .result-list { grid-template-columns: 1fr; }
+  .product-panel.result-overlay { grid-template-columns: 1fr; }
+  .product-media { height: 200px; }
+}
