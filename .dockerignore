@@ -1,0 +1,23 @@
+# Fichiers exclus du contexte Docker (COPY . . dans le Dockerfile).
+# Sans ce fichier, .venv/ (~2 Go avec tensorflow), .git/ et le dataset
+# Kaggle seraient copiés dans l'image, la faisant exploser à plusieurs Go.
+
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+
+.git/
+.gitignore
+
+dataset/
+data/
+*.zip
+
+.vscode/
+.idea/
+.DS_Store
+
+# Le modèle entraîné (.h5) N'EST PAS exclu : il doit être présent dans
+# l'image pour que l'inférence CNN fonctionne en production.
